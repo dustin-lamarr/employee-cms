@@ -1,5 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
+// const AddDept = require("./addDept");
+// const addDept = require("./addDept");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -9,7 +11,7 @@ const connection = mysql.createConnection({
     database: "employees_db"
 });
 
-connection.connect(function(err) {
+connection.connect(function (err) {
     if (err) throw (err);
 });
 
@@ -24,10 +26,56 @@ function runApp() {
             "Update employee roles"
         ]
     })
-    .then(function(answers) {
-        switch (answers.action) {
-        case "Add departments, roles, or employees":
-            
-        }
-    })
+        .then(function (answers) {
+
+            addDept();
+
+        })
 }
+
+
+function addDept() {
+
+    inquirer
+        .prompt([
+        {
+            name: "department",
+            type: "input",
+            message: "Enter new department name"
+        },
+        {
+            name: "again",
+            type: "list",
+            message: "Would you like to enter another new department?",
+            choices: ["Yes", "No"]
+        }])
+
+        .then(answers => {
+
+            if (answers.again === "Yes") {
+                connection.query(
+                    "INSERT INTO department ?",
+                    {
+                        name: answers.department
+                    }
+                );
+                addDept();
+            }
+            if (answers.again === "No") {
+                connection.query(
+                    "INSERT INTO department SET ?",
+                    {
+                        name: answers.department
+                    },
+                    function(err) {
+                        if (err) throw err;
+                        console.log("it worked"); 
+                      }   
+                )
+            }
+        })
+}
+
+// console.log(name)
+
+runApp();
