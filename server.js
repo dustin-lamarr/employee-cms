@@ -11,49 +11,47 @@ const connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw (err);
-    runApp();
+    appStart();
 });
 
-
-
-function runApp() {
-
-    inquirer.prompt({
-        type: 'list',
-        name: 'menu',
-        message: "From this menu, you can choose to Add, View, or update info for departments, roles, or employees. What would you like to do?",
-        choices: ["Add",
-            "View",
-            "Update"],
-    })
-
-        .then((answers) => {
-            console.log(answers);
-
-            if (answers.choices === "Add") {
-                addDept();
-                // inquirer.prompt({
-                //     name: "roleAdds",
-                //     type: "rawlist",
-                //     message: "Which would you like to add?",
-                //     choices: [
-                //         "Add departments",
-                //         "Add roles",
-                //         "Add employees"
-                //     ]
-                // })
-                //     .then(answers => {
-                //         if (answers.roleAdds === "Add departments") {
-                //             // addDept()
-                //         }
-
-
-                //         if (answers.roleAdds === "Add roles") {
-
-                //         }
-                //     });
+function appStart() {
+    inquirer
+        .prompt({
+            type: 'list',
+            name: 'menu',
+            message: "From this menu, you can choose to Add, View, or update info for departments, roles, or employees. What would you like to do?",
+            choices: ["Add",
+                "View",
+                "Update"],
+        })
+        .then((answer) => {
+            if (answer.menu === "Add") {
+                addWhat();
             }
-         
+        });
+};
+
+function addWhat() {
+    inquirer
+        .prompt({
+            name: "add",
+            type: "rawlist",
+            message: "Which would you like to add?",
+            choices: [
+                "Departments",
+                "Roles",
+                "Employees"
+            ]
+        })
+        .then(answer => {
+            if (answer.add === "Departments") {
+                addDept();
+            }
+
+
+            if (answer.add === "Roles") {
+                addRole();
+            }
         });
 };
 
@@ -75,7 +73,7 @@ function addDept() {
 
             if (answers.again === "Yes") {
                 connection.query(
-                    "INSERT INTO department ?",
+                    "INSERT INTO department SET ?",
                     {
                         name: answers.department
                     }
@@ -93,30 +91,63 @@ function addDept() {
                         console.log("it worked");
                     }
                 );
-                runApp();
+                appStart();
             }
-        })
-}
+        });
+};
 
-// function addSelect() {
-//     inquirer.prompt({
-//         name: "roleAdds",
-//         type: "rawlist",
-//         message: "Which would you like to add?",
-//         choices: [
-//             "Add departments",
-//             "Add roles",
-//             "Add employees"
-//         ]
-//     })
-//         .then(answers => {
-//             if(answers.roleAdds === "Add departments"){
-//             addDept()
-//             }
+function addRole() {
+    inquirer
+        .prompt([
+            {
+                name: "title",
+                type: "input",
+                message: "Enter title"
+            },
+            {
+                name: "salary",
+                type: "input",
+                message: "Enter salary"
+            },
+            {
+                name: "deptID",
+                type: "input",
+                message: "Enter department ID number"
+            },
+            {
+                name: "again",
+                type: "list",
+                message: "Would you like to enter another new role?",
+                choices: ["Yes", "No"]
+            }
+        ])
+        .then(answers => {
+            if (answers.again === "Yes") {
+                connection.query(
+                    "INSERT INTO role SET ?",
+                    {
+                        title: answers.title,
+                        salary: answers.salary,
+                        department_id: answers.deptID
+                    }
+                );
+                addRole();
+            }
+            if (answers.again === "No") {
+                connection.query(
+                    "INSERT INTO role SET ?",
+                    {
+                        title: answers.title,
+                        salary: answers.salary,
+                        department_id: answers.deptID
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("it worked");
+                    }
+                );
+                appStart();
+            }
+        });
+};
 
-
-//             if(answers.roleAdds === "Add roles"){
-//                 new AddRole
-//             }
-// });
-// }
