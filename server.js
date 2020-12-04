@@ -11,46 +11,50 @@ const connection = mysql.createConnection({
 
 connection.connect(function (err) {
     if (err) throw (err);
+    runApp();
 });
 
-runApp();
 
-var menu = {
-    type: 'list',
-    name: 'menu',
-    message: "What would you like to do?",
-    choices: ["Add departments, roles, or employees",
-        "View departments, roles, or employees",
-        "Update employee roles"],
-};
 
 function runApp() {
 
-    inquirer.prompt(menu).then((answers) => {
-        if (answers.choices === "Add departments, roles, or employees") {
+    inquirer.prompt({
+        type: 'list',
+        name: 'menu',
+        message: "From this menu, you can choose to Add, View, or update info for departments, roles, or employees. What would you like to do?",
+        choices: ["Add",
+            "View",
+            "Update"],
+    })
 
-            inquirer.prompt({
-                name: "roleAdds",
-                type: "rawlist",
-                message: "Which would you like to add?",
-                choices: [
-                    "Add departments",
-                    "Add roles",
-                    "Add employees"
-                ]
-            })
-                .then(answers => {
-                    if (answers.roleAdds === "Add departments") {
-                        addDept()
-                    }
+        .then((answers) => {
+            console.log(answers);
+
+            if (answers.choices === "Add") {
+                addDept();
+                // inquirer.prompt({
+                //     name: "roleAdds",
+                //     type: "rawlist",
+                //     message: "Which would you like to add?",
+                //     choices: [
+                //         "Add departments",
+                //         "Add roles",
+                //         "Add employees"
+                //     ]
+                // })
+                //     .then(answers => {
+                //         if (answers.roleAdds === "Add departments") {
+                //             // addDept()
+                //         }
 
 
-                    if (answers.roleAdds === "Add roles") {
+                //         if (answers.roleAdds === "Add roles") {
 
-                    }
-                });
-        }
-    });
+                //         }
+                //     });
+            }
+         
+        });
 };
 
 function addDept() {
