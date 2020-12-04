@@ -1,7 +1,5 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const AddDept = require("./addDept");
-// const addDept = require("./addDept");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -15,41 +13,60 @@ connection.connect(function (err) {
     if (err) throw (err);
 });
 
+runApp();
+
+var menu = {
+    type: 'list',
+    name: 'menu',
+    message: "What would you like to do?",
+    choices: ["Add departments, roles, or employees",
+        "View departments, roles, or employees",
+        "Update employee roles"],
+};
+
 function runApp() {
-    inquirer.prompt({
-        name: "options",
-        type: "rawlist",
-        message: "What would you like to do?",
-        choices: [
-            "Add departments, roles, or employees",
-            "View departments, roles, or employees",
-            "Update employee roles"
-        ]
-    })
-        .then(function (answers) {
 
-            addDept();
+    inquirer.prompt(menu).then((answers) => {
+        if (answers.choices === "Add departments, roles, or employees") {
 
-        })
-}
+            inquirer.prompt({
+                name: "roleAdds",
+                type: "rawlist",
+                message: "Which would you like to add?",
+                choices: [
+                    "Add departments",
+                    "Add roles",
+                    "Add employees"
+                ]
+            })
+                .then(answers => {
+                    if (answers.roleAdds === "Add departments") {
+                        addDept()
+                    }
 
+
+                    if (answers.roleAdds === "Add roles") {
+
+                    }
+                });
+        }
+    });
+};
 
 function addDept() {
-
     inquirer
         .prompt([
-        {
-            name: "department",
-            type: "input",
-            message: "Enter new department name"
-        },
-        {
-            name: "again",
-            type: "list",
-            message: "Would you like to enter another new department?",
-            choices: ["Yes", "No"]
-        }])
-
+            {
+                name: "department",
+                type: "input",
+                message: "Enter new department name"
+            },
+            {
+                name: "again",
+                type: "list",
+                message: "Would you like to enter another new department?",
+                choices: ["Yes", "No"]
+            }])
         .then(answers => {
 
             if (answers.again === "Yes") {
@@ -67,15 +84,35 @@ function addDept() {
                     {
                         name: answers.department
                     },
-                    function(err) {
+                    function (err) {
                         if (err) throw err;
-                        console.log("it worked"); 
-                      }   
-                )
+                        console.log("it worked");
+                    }
+                );
+                runApp();
             }
         })
 }
 
-// console.log(name)
+// function addSelect() {
+//     inquirer.prompt({
+//         name: "roleAdds",
+//         type: "rawlist",
+//         message: "Which would you like to add?",
+//         choices: [
+//             "Add departments",
+//             "Add roles",
+//             "Add employees"
+//         ]
+//     })
+//         .then(answers => {
+//             if(answers.roleAdds === "Add departments"){
+//             addDept()
+//             }
 
-runApp();
+
+//             if(answers.roleAdds === "Add roles"){
+//                 new AddRole
+//             }
+// });
+// }
