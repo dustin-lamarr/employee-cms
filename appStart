@@ -13,20 +13,20 @@ function appStart() {
                 "Update"],
         })
         .then((answer) => {
-            switch (answer, action) {
-                case "Add":
-                    addWhat();
-                    break;
+            // switch (answer, action) {
+            //     case "Add":
+            //         addWhat();
+            //         break;
 
-                case "View":
-                    viewWhat();
-                    break;
-            }
-
-
-            // if (answer.menu === "Add") {
-            //     addWhat();
+            //     case "View":
+            //         viewWhat();
+            //         break;
             // }
+
+
+            if (answer.menu === "Add") {
+                addWhat();
+            }
         });
 };
 
