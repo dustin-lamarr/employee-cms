@@ -1,0 +1,35 @@
+const mysql = require("mysql");
+const inquirer = require("inquirer");
+const addWhat = require("./addWhat.js");
+
+function appStart() {
+    inquirer
+        .prompt({
+            type: 'list',
+            name: 'menu',
+            message: "From this menu, you can choose to Add, View, or update info for departments, roles, or employees. What would you like to do?",
+            choices: ["Add",
+                "View",
+                "Update"],
+        })
+        .then((answer) => {
+            switch (answer, action) {
+                case "Add":
+                    addWhat();
+                    break;
+
+                case "View":
+                    viewWhat();
+                    break;
+            }
+
+
+            // if (answer.menu === "Add") {
+            //     addWhat();
+            // }
+        });
+};
+
+
+
+module.exports = appStart;
