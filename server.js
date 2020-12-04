@@ -2,7 +2,7 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const addWhat = require("./addWhat.js");
 const appStart = require("./appStart");
-
+const cTable = require('console.table');
 
 const connection = mysql.createConnection({
     host: "localhost",

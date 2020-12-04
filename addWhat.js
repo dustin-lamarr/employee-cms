@@ -1,6 +1,6 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const appStart = require("./appStart");
+const viewWhat = require("./viewWhat.js");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -23,6 +23,9 @@ function appStart() {
         .then((answer) => {
             if (answer.menu === "Add") {
                 addWhat();
+            }
+            if (answer.menu === "View") {
+                viewWhat();
             }
         });
 };
@@ -211,7 +214,5 @@ function addWhat() {
                 });
         };
 };
-
-
 
 module.exports = addWhat;

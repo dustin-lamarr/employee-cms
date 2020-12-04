@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
-// const appStart = require("./appStart");
+const cTable = require('console.table');
+const addWhat = require("./addWhat.js");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -24,194 +25,93 @@ function appStart() {
             if (answer.menu === "Add") {
                 addWhat();
             }
+
+            if (answer.menu === "View") {
+                viewWhat();
+            }
         });
 };
 
-function addWhat() {
+function viewWhat() {
     inquirer
         .prompt({
-            name: "add",
+            name: "view",
             type: "rawlist",
-            message: "Which would you like to add?",
+            message: "Which would you like to view?",
             choices: [
                 "Departments",
                 "Roles",
-                "Employees"
+                "Employees",
+                new inquirer.Separator(),
+                "Exit"
             ]
         })
         .then(answer => {
-            if (answer.add === "Departments") {
-                addDept();
+            if (answer.view === "Departments") {
+                viewDepts();
             }
 
-            if (answer.add === "Roles") {
-                addRole();
+            if (answer.view === "Roles") {
+                viewRoles();
             }
 
-            if (answer.add === "Employees") {
-                addEmployee();
+            if (answer.view === "Employees") {
+                viewEmployees();
+            }
+
+            if (answer.view === "Exit") {
+                appStart();
             }
         });
 
-        function addDept() {
-            inquirer
-                .prompt([
-                    {
-                        name: "department",
-                        type: "input",
-                        message: "Enter new department name"
-                    },
-                    {
-                        name: "again",
-                        type: "list",
-                        message: "Would you like to enter another new department?",
-                        choices: ["Yes", "No"]
-                    }])
-                .then(answers => {
-        
-                    if (answers.again === "Yes") {
-                        connection.query(
-                            "INSERT INTO department SET ?",
-                            {
-                                name: answers.department
-                            }
-                        );
-                        addDept();
-                    }
-                    if (answers.again === "No") {
-                        connection.query(
-                            "INSERT INTO department SET ?",
-                            {
-                                name: answers.department
-                            },
-                            function (err) {
-                                if (err) throw err;
-                                console.log("it worked");
-                            }
-                        );
-                        appStart();
-                    }
-                });
-        };
-        
-        function addRole() {
-            inquirer
-                .prompt([
-                    {
-                        name: "title",
-                        type: "input",
-                        message: "Enter title"
-                    },
-                    {
-                        name: "salary",
-                        type: "input",
-                        message: "Enter salary"
-                    },
-                    {
-                        name: "deptID",
-                        type: "input",
-                        message: "Enter department ID number"
-                    },
-                    {
-                        name: "again",
-                        type: "list",
-                        message: "Would you like to enter another new role?",
-                        choices: ["Yes", "No"]
-                    }
-                ])
-                .then(answers => {
-                    if (answers.again === "Yes") {
-                        connection.query(
-                            "INSERT INTO role SET ?",
-                            {
-                                title: answers.title,
-                                salary: answers.salary,
-                                department_id: answers.deptID
-                            }
-                        );
-                        addRole();
-                    }
-                    if (answers.again === "No") {
-                        connection.query(
-                            "INSERT INTO role SET ?",
-                            {
-                                title: answers.title,
-                                salary: answers.salary,
-                                department_id: answers.deptID
-                            },
-                            function (err) {
-                                if (err) throw err;
-                                console.log("it worked");
-                            }
-                        );
-                        appStart();
-                    }
-                });
-        };
+    function viewDepts() {
+        var deptQuery = "SELECT * FROM department";
+        connection.query(deptQuery, function (err, res) {
+            if (err) throw (err);
+            console.table(res)
+            viewMore();
+        });
+    };
 
-        function addEmployee() {
-            inquirer
-                .prompt([
-                    {
-                        name: "first",
-                        type: "input",
-                        message: "Enter first name"
-                    },
-                    {
-                        name: "last",
-                        type: "input",
-                        message: "Enter last name"
-                    },
-                    {
-                        name: "roleID",
-                        type: "input",
-                        message: "Enter role ID number"
-                    },
-                    {
-                        name: "managerID",
-                        type: "input",
-                        message: "Enter manager ID number"
-                    },
-                    {
-                        name: "again",
-                        type: "list",
-                        message: "Would you like to enter another new employee?",
-                        choices: ["Yes", "No"]
-                    }
-                ])
-                .then(answers => {
-                    if (answers.again === "Yes") {
-                        connection.query(
-                            "INSERT INTO employee SET ?",
-                            {
-                                first_name: answers.first,
-                                last_name: answers.last,
-                                role_id: answers.roleID,
-                                manager_id: answers.managerID,                                
-                            }
-                        );
-                        addEmployee();
-                    }
-                    if (answers.again === "No") {
-                        connection.query(
-                            "INSERT INTO employee SET ?",
-                            {
-                                first_name: answers.first,
-                                last_name: answers.last,
-                                role_id: answers.roleID,
-                                manager_id: answers.managerID, 
-                            },
-                            function (err) {
-                                if (err) throw err;
-                                console.log("it worked");
-                            }
-                        );
-                        appStart();
-                    }
-                });
-        };
+    function viewRoles() {
+        var roleQuery = "SELECT * FROM role";
+        connection.query(roleQuery, function (err, res) {
+            if (err) throw (err);
+            console.table(res)
+            viewMore();
+        });
+    };
+
+    function viewEmployees() {
+        var empQuery = "SELECT * FROM employee";
+        connection.query(empQuery, function (err, res) {
+            if (err) throw (err);
+            console.table(res)
+            viewMore();
+        });
+    }
+
+    function viewMore() {
+        inquirer
+            .prompt({
+                type: 'list',
+                name: 'viewMore',
+                message: "Would you like to view more?",
+                choices: ["Yes",
+                    "No"],
+            })
+            .then((answer) => {
+                if (answer.viewMore === "Yes") {
+                    viewWhat();
+                }
+    
+                if (answer.viewMore === "No") {
+                    appStart();
+                }
+            });
+    };
 };
 
 
 
-module.exports = addWhat;
+module.exports = viewWhat;

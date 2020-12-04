@@ -1,6 +1,8 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const addWhat = require("./addWhat.js");
+const viewWhat = require("./viewWhat.js");
+
 
 function appStart() {
     inquirer
@@ -13,19 +15,12 @@ function appStart() {
                 "Update"],
         })
         .then((answer) => {
-            // switch (answer, action) {
-            //     case "Add":
-            //         addWhat();
-            //         break;
-
-            //     case "View":
-            //         viewWhat();
-            //         break;
-            // }
-
-
             if (answer.menu === "Add") {
                 addWhat();
+            }
+
+            if (answer.menu === "View") {
+                viewWhat();
             }
         });
 };
