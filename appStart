@@ -2,6 +2,7 @@ const mysql = require("mysql");
 const inquirer = require("inquirer");
 const addWhat = require("./addWhat.js");
 const viewWhat = require("./viewWhat.js");
+const updateWhat = require("./updateWhat.js");
 
 
 function appStart() {
@@ -21,6 +22,9 @@ function appStart() {
 
             if (answer.menu === "View") {
                 viewWhat();
+            }
+            if (answer.menu === "Update") {
+                updateWhat();
             }
         });
 };
