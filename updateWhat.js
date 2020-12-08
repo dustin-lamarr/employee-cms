@@ -49,7 +49,7 @@ function updateWhat() {
         })
         .then(answer => {
             if (answer.update === "Departments") {
-                updateDept();
+                selectDept();
             }
 
             if (answer.update === "Roles") {
@@ -61,7 +61,7 @@ function updateWhat() {
             }
         });
 
-    function updateDept() {
+    function selectDept() {
         connection.query("SELECT * FROM department",
             function (err, res) {
                 if (err) throw err;
@@ -86,37 +86,42 @@ function updateWhat() {
                         }
                     ])
                     .then(answers => {
-                        var deptQuery = "UPDATE department SET ? WHERE ?";
-                        connection.query(deptQuery,
-                            [{
-                                name: answers.updated
-                            },
-                            {
-                                name: answers.department
-                            }],
+                     updateDept(answers);
+                    });
+            
+
+            function updateDept(answers) {
+                var deptQuery = "UPDATE department SET ? WHERE ?";
+                connection.query(deptQuery,
+                    [{
+                        name: answers.updated
+                    },
+                    {
+                        name: answers.department
+                    }],
+                    function (err, res) {
+                        if (err) throw (err);
+                        console.table(res)
+                    });
+                    if(answers.updateWhich === "Title"){
+                                       
+                        connection.query("UPDATE role SET ? WHERE ?",
+                        [{
+                            title: answers.update
+                        },
+                        {
+                            title: answers.role
+                        }],
                             function (err, res) {
                                 if (err) throw (err);
-                                console.table(res)
+                                console.log(answers.role + " successfully changed to " + answers.update)
                             });
-                            if(answers.updateWhich === "Title"){
-                                               
-                                connection.query("UPDATE role SET ? WHERE ?",
-                                [{
-                                    title: answers.update
-                                },
-                                {
-                                    title: answers.role
-                                }],
-                                    function (err, res) {
-                                        if (err) throw (err);
-                                        console.log(answers.role + " successfully changed to " + answers.update)
-                                    });
-                                }
-                                updateMore();
-                    });
-            });
-
+                        }
+            };
+        });
     };
+
+    
 
     function updateRole() {
         connection.query("SELECT * FROM role",
@@ -126,14 +131,18 @@ function updateWhat() {
                     .prompt([
                         {
                             name: "role",
-                            type: "rawlist",
+                            type: "list",
                             message: "Choose role to update",
                             choices: function () {
-                                var choicesArray = [];
+                                var choicesObj = [];
                                 for (var i = 0; i < res.length; i++) {
-                                    choicesArray.push(res[i].title);
+                                    choicesObj.push({
+                                        value: res[i].id, 
+                                        name: res[i].title
+                                    })
                                 }
-                                return choicesArray;
+                                console.log(choicesObj);
+                                return choicesObj;
                             }
                         },
                         {
@@ -148,15 +157,15 @@ function updateWhat() {
                             message: "Enter new data"
                         }
                     ])
-                    .then(answers => {
+                    .then((answers) => {
+                        console.log(answers.role.value + " after .then")
                         if (answers.updateWhich === "Title") {
-
                             connection.query("UPDATE role SET ? WHERE ?",
                                 [{
                                     title: answers.update
                                 },
                                 {
-                                    title: answers.role
+                                    id: answers.role.value
                                 }],
                                 function (err, res) {
                                     if (err) throw (err);
@@ -166,7 +175,7 @@ function updateWhat() {
 
                         if (answers.updateWhich === "Salary") {
 
-                            connection.query("UPDATE salary SET ? WHERE ?",
+                            connection.query("UPDATE role SET ? WHERE ?",
                                 [{
                                     salary: answers.update
                                 },
@@ -211,11 +220,11 @@ function updateWhat() {
                     "No"],
             })
             .then((answer) => {
-                if (answer.viewMore === "Yes") {
+                if (answer.updateMore === "Yes") {
                     updateWhat();
                 }
 
-                if (answer.viewMore === "No") {
+                if (answer.updateMore === "No") {
                     appStart();
                 }
             });
