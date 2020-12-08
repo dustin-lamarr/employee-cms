@@ -53,7 +53,7 @@ function updateWhat() {
             }
 
             if (answer.update === "Roles") {
-                updateRole(); //need to create
+                selectRole(); //need to create
             }
 
             if (answer.update === "Employees") {
@@ -86,44 +86,30 @@ function updateWhat() {
                         }
                     ])
                     .then(answers => {
-                     updateDept(answers);
+                        updateDept(answers);
                     });
-            
 
-            function updateDept(answers) {
-                var deptQuery = "UPDATE department SET ? WHERE ?";
-                connection.query(deptQuery,
-                    [{
-                        name: answers.updated
-                    },
-                    {
-                        name: answers.department
-                    }],
-                    function (err, res) {
-                        if (err) throw (err);
-                        console.table(res)
-                    });
-                    if(answers.updateWhich === "Title"){
-                                       
-                        connection.query("UPDATE role SET ? WHERE ?",
+                updateMore();
+
+                function updateDept(answers) {
+                    var deptQuery = "UPDATE department SET ? WHERE ?";
+                    connection.query(deptQuery,
                         [{
-                            title: answers.update
+                            name: answers.updated
                         },
                         {
-                            title: answers.role
+                            name: answers.department
                         }],
-                            function (err, res) {
-                                if (err) throw (err);
-                                console.log(answers.role + " successfully changed to " + answers.update)
-                            });
-                        }
-            };
-        });
+                        function (err, res) {
+                            if (err) throw (err);
+                            console.table(res)
+                        });
+
+                };
+            });
     };
 
-    
-
-    function updateRole() {
+    function selectRole() {
         connection.query("SELECT * FROM role",
             function (err, res) {
                 if (err) throw err;
@@ -137,13 +123,14 @@ function updateWhat() {
                                 var choicesObj = [];
                                 for (var i = 0; i < res.length; i++) {
                                     choicesObj.push({
-                                        value: res[i].id, 
+                                        value: res[i].id,
                                         name: res[i].title
                                     })
                                 }
                                 console.log(choicesObj);
                                 return choicesObj;
                             }
+
                         },
                         {
                             name: "updateWhich",
@@ -157,15 +144,30 @@ function updateWhat() {
                             message: "Enter new data"
                         }
                     ])
+
                     .then((answers) => {
-                        console.log(answers.role.value + " after .then")
                         if (answers.updateWhich === "Title") {
+                            updateTitle(answers);
+                        };
+
+                        if (answers.updateWhich === "Salary") {
+                            updateSalary(answers);
+                        }
+
+                        if (answers.updateWhich === "Department ID") {
+                            updateDeptID(answers);
+
+                        }
+                        updateMore();
+
+                        function updateTitle() {
+                            console.log(answers)
                             connection.query("UPDATE role SET ? WHERE ?",
                                 [{
                                     title: answers.update
                                 },
                                 {
-                                    id: answers.role.value
+                                    id: answers.role
                                 }],
                                 function (err, res) {
                                     if (err) throw (err);
@@ -173,41 +175,35 @@ function updateWhat() {
                                 });
                         };
 
-                        if (answers.updateWhich === "Salary") {
-
+                        function updateSalary() {
                             connection.query("UPDATE role SET ? WHERE ?",
                                 [{
                                     salary: answers.update
                                 },
                                 {
-                                    salary: answers.role
+                                    id: answers.role
                                 }],
                                 function (err, res) {
                                     if (err) throw (err);
                                     console.log(answers.role + " successfully changed to " + answers.update)
                                 });
-                        }
+                        };
 
-                        if (answers.updateWhich === "Department ID") {
-
+                        function updateDeptID() {
                             connection.query("UPDATE department_id SET ? WHERE ?",
                                 [{
                                     department_id: answers.update
                                 },
                                 {
-                                    department_id: answers.role
+                                    id: answers.role
                                 }],
                                 function (err, res) {
                                     if (err) throw (err);
                                     console.log(answers.role + " successfully changed to " + answers.update)
                                 });
                         }
-                        updateMore();
-
                     });
-
             });
-
     };
 
     function updateMore() {
