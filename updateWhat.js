@@ -57,7 +57,7 @@ function updateWhat() {
             }
 
             if (answer.update === "Employees") {
-                showEmps(); // need to create
+                selectEmp(); // need to create
             }
         });
 
@@ -156,7 +156,6 @@ function updateWhat() {
 
                         if (answers.updateWhich === "Department ID") {
                             updateDeptID(answers);
-
                         }
                         updateMore();
 
@@ -190,7 +189,7 @@ function updateWhat() {
                         };
 
                         function updateDeptID() {
-                            connection.query("UPDATE department_id SET ? WHERE ?",
+                            connection.query("UPDATE role SET ? WHERE ?",
                                 [{
                                     department_id: answers.update
                                 },
@@ -201,10 +200,125 @@ function updateWhat() {
                                     if (err) throw (err);
                                     console.log(answers.role + " successfully changed to " + answers.update)
                                 });
-                        }
+                        };
                     });
             });
     };
+
+    function selectEmp() {
+        connection.query("SELECT * FROM employee",
+            function (err, res) {
+                if (err) throw err;
+                inquirer
+                    .prompt([
+                        {
+                            name: "role",
+                            type: "list",
+                            message: "Choose employee to update",
+                            choices: function () {
+                                var choicesObj = [];
+                                for (var i = 0; i < res.length; i++) {
+                                    choicesObj.push({
+                                        value: res[i].id,
+                                        name: res[i].title
+                                    })
+                                }
+                                console.log(choicesObj);
+                                return choicesObj;
+                            }
+
+                        },
+                        {
+                            name: "updateWhich",
+                            type: "rawlist",
+                            message: "Which would you like to update?",
+                            choices: ["First Name", "Last Name", "Role ID, Manager ID"]
+                        },
+                        {
+                            name: "update",
+                            type: "input",
+                            message: "Enter new data"
+                        }
+                    ])
+
+                    .then((answers) => {
+                        if (answers.updateWhich === "First Name") {
+                            updateFirst(answers);
+                        };
+
+                        if (answers.updateWhich === "Last Name") {
+                            UpdateLast(answers);
+                        }
+
+                        if (answers.updateWhich === "Role ID") {
+                            updateRoleID(answers);
+                        }
+
+                        if (answers.updateWhich === "Manager ID") {
+                            updateMgrID(answers);
+                        }
+                        updateMore();
+
+                        function updateFirst() {
+                            console.log(answers)
+                            connection.query("UPDATE employee SET ? WHERE ?",
+                                [{
+                                    first_name: answers.update
+                                },
+                                {
+                                    id: answers.role
+                                }],
+                                function (err, res) {
+                                    if (err) throw (err);
+                                    console.log(answers.role + " successfully changed to " + answers.update)
+                                });
+                        };
+
+                        function UpdateLast() {
+                            connection.query("UPDATE employee SET ? WHERE ?",
+                                [{
+                                    last_name: answers.update
+                                },
+                                {
+                                    id: answers.role
+                                }],
+                                function (err, res) {
+                                    if (err) throw (err);
+                                    console.log(answers.role + " successfully changed to " + answers.update)
+                                });
+                        };
+
+                        function updateRoleID() {
+                            connection.query("UPDATE employee SET ? WHERE ?",
+                                [{
+                                    role_id: answers.update
+                                },
+                                {
+                                    id: answers.role
+                                }],
+                                function (err, res) {
+                                    if (err) throw (err);
+                                    console.log(answers.role + " successfully changed to " + answers.update)
+                                });
+                        };
+
+                        function updateMgrID() {
+                            connection.query("UPDATE employee SET ? WHERE ?",
+                                [{
+                                    manager_id: answers.update
+                                },
+                                {
+                                    id: answers.role
+                                }],
+                                function (err, res) {
+                                    if (err) throw (err);
+                                    console.log(answers.role + " successfully changed to " + answers.update)
+                                });
+                        };
+                    });
+            });
+    };
+    
 
     function updateMore() {
         inquirer
