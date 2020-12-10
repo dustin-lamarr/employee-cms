@@ -69,12 +69,15 @@ function updateWhat() {
                     .prompt([
                         {
                             name: "department",
-                            type: "rawlist",
+                            type: "list",
                             message: "Choose department to update",
                             choices: function () {
                                 var choicesArray = [];
                                 for (var i = 0; i < res.length; i++) {
-                                    choicesArray.push(res[i].name);
+                                    choicesArray.push({
+                                        value: res[i].id,
+                                        name: res[i].name
+                                    });
                                 }
                                 return choicesArray;
                             }
@@ -82,14 +85,13 @@ function updateWhat() {
                         {
                             name: "updated",
                             type: "input",
-                            message: "Choose new department name"
+                            message: "Enter new department name"
                         }
                     ])
                     .then(answers => {
                         updateDept(answers);
+                        updateMore();
                     });
-
-                updateMore();
 
                 function updateDept(answers) {
                     var deptQuery = "UPDATE department SET ? WHERE ?";
@@ -98,17 +100,16 @@ function updateWhat() {
                             name: answers.updated
                         },
                         {
-                            name: answers.department
+                            id: answers.department
                         }],
                         function (err, res) {
                             if (err) throw (err);
-                            console.table(res)
+                            console.log(answers.department + " successfully changed to " + answers.updated)
                         });
 
                 };
             });
-    };
-
+        }
     function selectRole() {
         connection.query("SELECT * FROM role",
             function (err, res) {
@@ -127,7 +128,6 @@ function updateWhat() {
                                         name: res[i].title
                                     })
                                 }
-                                console.log(choicesObj);
                                 return choicesObj;
                             }
 
@@ -220,10 +220,9 @@ function updateWhat() {
                                 for (var i = 0; i < res.length; i++) {
                                     choicesObj.push({
                                         value: res[i].id,
-                                        name: res[i].title
+                                        name: res[i].first
                                     })
                                 }
-                                console.log(choicesObj);
                                 return choicesObj;
                             }
 
@@ -232,7 +231,7 @@ function updateWhat() {
                             name: "updateWhich",
                             type: "rawlist",
                             message: "Which would you like to update?",
-                            choices: ["First Name", "Last Name", "Role ID, Manager ID"]
+                            choices: ["First Name", "Last Name", "Role ID", "Manager ID"]
                         },
                         {
                             name: "update",
