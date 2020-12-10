@@ -1,6 +1,7 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const viewWhat = require("./viewWhat.js");
+const updateWhat = require("./updateWhat.js");
 
 const connection = mysql.createConnection({
     host: "localhost",
@@ -26,6 +27,9 @@ function appStart() {
             }
             if (answer.menu === "View") {
                 viewWhat();
+            }
+            if (answer.menu === "Update") {
+                updateWhat();
             }
         });
 };
