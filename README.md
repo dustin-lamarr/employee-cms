@@ -11,7 +11,7 @@ Passing
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
  
 ## Screenshots
-<img src="./planner-screenshot.png"></img>
+<img src="/screenshot.png"></img>
 
 ## Tech/framework used
 JavaScript
